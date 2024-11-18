@@ -54,7 +54,7 @@ namespace Topic_4___Tracking_Time_and_Sound
             mouseState = Mouse.GetState();
             this.Window.Title = $"x = {mouseState.X}, y = {mouseState.Y}";
             seconds += (float)gameTime.ElapsedGameTime.TotalSeconds;
-            if (seconds > 10)
+            if (seconds > 15)
             {
                 seconds = 0f;
                 explode.Play();
@@ -73,9 +73,12 @@ namespace Topic_4___Tracking_Time_and_Sound
 
             // TODO: Add your drawing code here
             _spriteBatch.Begin();
+            if (seconds > 0)
+            {
+                _spriteBatch.Draw(bombTexture, bombRect, Color.White);
+                _spriteBatch.DrawString(timeFont, (15 - seconds).ToString("00.0"), new Vector2(270, 200), Color.Black);
 
-            _spriteBatch.Draw(bombTexture, bombRect, Color.White);
-            _spriteBatch.DrawString(timeFont, (10 - seconds).ToString("00.0"), new Vector2(270, 200), Color.Black);
+            }
 
             _spriteBatch.End();
             base.Draw(gameTime);
