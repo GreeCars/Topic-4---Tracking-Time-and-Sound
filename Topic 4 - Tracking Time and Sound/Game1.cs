@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Topic_4___Tracking_Time_and_Sound
 {
@@ -13,11 +14,17 @@ namespace Topic_4___Tracking_Time_and_Sound
         Texture2D bombTexture;
         Rectangle bombRect;
 
+        Texture2D explosionTexture;
+        Rectangle explosionRect;
+
         SpriteFont timeFont;
 
         SoundEffect explode;
+        SoundEffectInstance explodeInstance;
 
         float seconds;
+
+        bool isExploded;
 
         MouseState mouseState;
         public Game1()
@@ -33,10 +40,12 @@ namespace Topic_4___Tracking_Time_and_Sound
 
             base.Initialize();
             bombRect = new Rectangle(50, 50, 700, 400);
+            explosionRect = new Rectangle(50, 50, 700, 400);
             _graphics.PreferredBackBufferWidth = 800;
             _graphics.PreferredBackBufferHeight = 500;
             _graphics.ApplyChanges();
             seconds = 0f;
+            isExploded = false;
         }
 
         protected override void LoadContent()
@@ -45,20 +54,33 @@ namespace Topic_4___Tracking_Time_and_Sound
 
             // TODO: use this.Content to load your game content here
             bombTexture = Content.Load<Texture2D>("bomb");
+            explosionTexture = Content.Load<Texture2D>("explosion-image");
             timeFont = Content.Load<SpriteFont>("timeFont");
             explode = Content.Load<SoundEffect>("explosion");
+            explodeInstance = explode.CreateInstance();
         }
 
         protected override void Update(GameTime gameTime)
         {
             mouseState = Mouse.GetState();
             this.Window.Title = $"x = {mouseState.X}, y = {mouseState.Y}";
-            seconds += (float)gameTime.ElapsedGameTime.TotalSeconds;
+            if (!isExploded)
+                seconds += (float)gameTime.ElapsedGameTime.TotalSeconds;
+            else
+            {
+                if (explodeInstance.State == SoundState.Stopped)
+                    Exit();
+
+            }
+            
             if (seconds > 15)
             {
                 seconds = 0f;
-                explode.Play();
+                explodeInstance.Play();
+                isExploded = true;
             }
+
+           
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
@@ -73,11 +95,14 @@ namespace Topic_4___Tracking_Time_and_Sound
 
             // TODO: Add your drawing code here
             _spriteBatch.Begin();
-            if (seconds > 0)
+            if (!isExploded)
             {
                 _spriteBatch.Draw(bombTexture, bombRect, Color.White);
                 _spriteBatch.DrawString(timeFont, (15 - seconds).ToString("00.0"), new Vector2(270, 200), Color.Black);
-
+            }
+            else
+            {
+                _spriteBatch.Draw(explosionTexture, explosionRect, Color.White);
             }
 
             _spriteBatch.End();
