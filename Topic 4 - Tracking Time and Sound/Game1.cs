@@ -17,6 +17,11 @@ namespace Topic_4___Tracking_Time_and_Sound
         Texture2D explosionTexture;
         Rectangle explosionRect;
 
+        Texture2D pliersTexture;
+        Rectangle pliersRect;
+
+        Rectangle greenwireRect;
+
         SpriteFont timeFont;
 
         SoundEffect explode;
@@ -31,7 +36,7 @@ namespace Topic_4___Tracking_Time_and_Sound
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            IsMouseVisible = true;
+            IsMouseVisible = false;
         }
 
         protected override void Initialize()
@@ -41,6 +46,8 @@ namespace Topic_4___Tracking_Time_and_Sound
             base.Initialize();
             bombRect = new Rectangle(50, 50, 700, 400);
             explosionRect = new Rectangle(50, 50, 700, 400);
+            pliersRect = new Rectangle(0, 0, 50, 50);
+            greenwireRect = new Rectangle(486, 161, 586, 171);
             _graphics.PreferredBackBufferWidth = 800;
             _graphics.PreferredBackBufferHeight = 500;
             _graphics.ApplyChanges();
@@ -55,6 +62,7 @@ namespace Topic_4___Tracking_Time_and_Sound
             // TODO: use this.Content to load your game content here
             bombTexture = Content.Load<Texture2D>("bomb");
             explosionTexture = Content.Load<Texture2D>("explosion-image");
+            pliersTexture = Content.Load<Texture2D>("pliers");
             timeFont = Content.Load<SpriteFont>("timeFont");
             explode = Content.Load<SoundEffect>("explosion");
             explodeInstance = explode.CreateInstance();
@@ -63,6 +71,7 @@ namespace Topic_4___Tracking_Time_and_Sound
         protected override void Update(GameTime gameTime)
         {
             mouseState = Mouse.GetState();
+            pliersRect.Location = mouseState.Position;
             this.Window.Title = $"x = {mouseState.X}, y = {mouseState.Y}";
             if (!isExploded)
                 seconds += (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -85,8 +94,9 @@ namespace Topic_4___Tracking_Time_and_Sound
                 Exit();
 
             // TODO: Add your update logic here
-
-            base.Update(gameTime);
+            if (pliersRect.Intersects(greenwireRect))
+                Exit();
+                base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
@@ -99,6 +109,7 @@ namespace Topic_4___Tracking_Time_and_Sound
             {
                 _spriteBatch.Draw(bombTexture, bombRect, Color.White);
                 _spriteBatch.DrawString(timeFont, (15 - seconds).ToString("00.0"), new Vector2(270, 200), Color.Black);
+                _spriteBatch.Draw(pliersTexture, pliersRect, Color.White);
             }
             else
             {
