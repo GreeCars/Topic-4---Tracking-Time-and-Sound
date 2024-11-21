@@ -47,7 +47,7 @@ namespace Topic_4___Tracking_Time_and_Sound
             bombRect = new Rectangle(50, 50, 700, 400);
             explosionRect = new Rectangle(50, 50, 700, 400);
             pliersRect = new Rectangle(0, 0, 50, 50);
-            greenwireRect = new Rectangle(486, 161, 586, 171);
+            greenwireRect = new Rectangle(546, 91, 586, 92);
             _graphics.PreferredBackBufferWidth = 800;
             _graphics.PreferredBackBufferHeight = 500;
             _graphics.ApplyChanges();
@@ -74,7 +74,11 @@ namespace Topic_4___Tracking_Time_and_Sound
             pliersRect.Location = mouseState.Position;
             this.Window.Title = $"x = {mouseState.X}, y = {mouseState.Y}";
             if (!isExploded)
+            {
                 seconds += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                if (pliersRect.Intersects(greenwireRect))
+                    Exit();
+            }
             else
             {
                 if (explodeInstance.State == SoundState.Stopped)
@@ -94,8 +98,6 @@ namespace Topic_4___Tracking_Time_and_Sound
                 Exit();
 
             // TODO: Add your update logic here
-            if (pliersRect.Intersects(greenwireRect))
-                Exit();
                 base.Update(gameTime);
         }
 
